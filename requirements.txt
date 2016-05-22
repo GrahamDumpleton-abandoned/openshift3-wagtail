@@ -1,2 +1,4 @@
 Django>=1.9,<1.10
 wagtail>=1.4.5,<1.5
+psycopg2>=2.6.1,<2.7
+django-redis>=4.3.0,<4.4

@@ -4,7 +4,7 @@ set -x
 
 set -eo pipefail
 
-# This script runs database inialisation.
+# This script runs database initialisation.
 #
 # If the database initialisation has already been run, as determined by
 # the presence of a marker file in the persistent storage volume, we

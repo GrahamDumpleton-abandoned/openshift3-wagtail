@@ -131,7 +131,11 @@ STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, 'static'),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+if APP_ROOT:
+    STATIC_ROOT = os.path.join(APP_ROOT, 'tmp', 'django', 'static')
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 STATIC_URL = '/static/'
 
 if APP_ROOT:

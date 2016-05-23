@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -x
+
+set -eo pipefail
+
+# Check whether the database is actually ready.
+
+(cat - | python manage.py shell) << !
+import runpy
+_ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/scripts/check-database.py')
+!
+
+# Runs the database migration.
+#
+# This script should be executed using the 'warpdrive migrate' command
+# from a 'mid' hook. The deployment should only ever use a 'Recreate'
+# strategy and not a 'Rolling' strategy to ensure that database
+# migrations are done when no processes are trying to access the
+# database.
+
+echo " -----> Running Django database migration"
+
+python manage.py migrate

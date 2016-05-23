@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -x
+
+set -eo pipefail
+
+# This script runs database inialisation.
+#
+# If the database initialisation has already been run, as determined by
+# the presence of a marker file in the persistent storage volume, we
+# skip trying to perform database initialisation.
+#
+# This script can be executed using the 'warpdrive setup' command from a
+# 'pre' hook. The deployment should only ever use a 'Recreate' strategy
+# and not a 'Rolling' strategy because of possible later database
+# migrations.
+
+if [ ! -f $WARPDRIVE_APP_ROOT/data/markers/setup ]; then
+    # Check whether the database is actually ready.
+
+    (cat - | python manage.py shell) << !
+import runpy
+_ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/scripts/check-database.py')
+!
+
+    echo " -----> Running Django database migration"
+
+    python manage.py migrate
+
+    if [ x"$DJANGO_ADMIN_USERNAME" != x"" ];
+    then
+        echo " -----> Creating predefined Django super user"
+        (cat - | python manage.py shell) << !
+from django.contrib.auth.models import User;
+User.objects.create_superuser('$DJANGO_ADMIN_USERNAME',
+                      '$DJANGO_ADMIN_EMAIL',
+                      '$DJANGO_ADMIN_PASSWORD')
+!
+    else
+        if (tty > /dev/null 2>&1); then
+            echo " -----> Running Django super user creation"
+            python manage.py createsuperuser
+        fi
+    fi
+
+    # Create the marker file to indicate database has been initialised.
+
+    mkdir -p $WARPDRIVE_APP_ROOT/data/markers
+    date > $WARPDRIVE_APP_ROOT/data/markers/setup
+    chmod -w $WARPDRIVE_APP_ROOT/data/markers/setup
+fi

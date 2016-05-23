@@ -16,6 +16,7 @@ import os
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
+APP_ROOT = os.environ.get('WARPDRIVE_APP_ROOT')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -90,10 +91,16 @@ WSGI_APPLICATION = 'wagtaildemo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+
+if APP_ROOT:
+    SQLITE_DATABASE_NAME = os.path.join(APP_ROOT, 'data', 'db.sqlite3')
+else:
+    SQLITE_DATABASE_NAME = os.path.join(BASE_DIR, 'db.sqlite3')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': SQLITE_DATABASE_NAME,
     }
 }
 

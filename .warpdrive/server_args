@@ -1,4 +1,4 @@
---url-alias /media/ $WARPDRIVE_APP_ROOT/data/django/media/
+--url-alias /media/ $WARPDRIVE_APP_ROOT/data/wagtail/media/
 --trust-proxy-header X-Forwarded-For
 --trust-proxy-header X-Forwarded-Port
 --trust-proxy-header X-Forwarded-Proto

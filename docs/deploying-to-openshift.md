@@ -295,3 +295,12 @@ Started deployment #6
 
 If we now browse to the URL for the application, we should see it displaying the default home page correctly. We can visit the admin interface, log in using the super user we created when running ``warpdrive setup`` and add new pages or upload media files.
 
+## Customising the Application
+
+At this point you would need to star customising the Wagtail page model objects. For details on how to do that see the Wagtail documentation at:
+
+* http://docs.wagtail.io/en/latest/getting_started/tutorial.html#extend-the-homepage-model
+
+Each time you have made code changes, update database migrations and commit all changes back to the source code repository. After having pushed changes up to GitHub, you can manually trigger a new build and deployment by running ``oc start-build wagtail``.
+
+

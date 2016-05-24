@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -x
+
+set -eo pipefail
+
+if [ "$WAGTAIL_DEPLOYMENT_TYPE" = "single-pod" ]; then
+    warpdrive setup
+    warpdrive migrate
+fi

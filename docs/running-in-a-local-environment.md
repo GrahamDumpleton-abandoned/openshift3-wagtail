@@ -55,14 +55,6 @@ Collecting Django<1.10,>=1.9 (from -r requirements.txt (line 1))
   Downloading Django-1.9.6-py2.py3-none-any.whl (6.6MB)
     100% |████████████████████████████████| 6.6MB 621kB/s
 ...
-Installing collected packages: Django, six, html5lib, Unidecode, Willow, beautifulsoup4, Pillow, django-treebeard, djangorestframework, django-taggit, pytz, django-modelcluster, wagtail, psycopg2, redis, django-redis
-  Running setup.py install for html5lib ... done
-  Running setup.py install for Unidecode ... done
-  Running setup.py install for django-treebeard ... done
-  Running setup.py install for django-modelcluster ... done
-  Running setup.py install for psycopg2 ... done
-  Running setup.py install for django-redis ... done
-Successfully installed Django-1.9.6 Pillow-3.2.0 Unidecode-0.4.19 Willow-0.3.1 beautifulsoup4-4.4.1 django-modelcluster-1.1 django-redis-4.3.0 django-taggit-0.18.3 django-treebeard-4.0.1 djangorestframework-3.3.3 html5lib-0.9999999 psycopg2-2.6.1 pytz-2016.4 redis-2.10.5 six-1.10.0 wagtail-1.4.5
 Collecting mod_wsgi
   Downloading mod_wsgi-4.5.2.tar.gz (1.8MB)
     100% |████████████████████████████████| 1.8MB 1.1MB/s

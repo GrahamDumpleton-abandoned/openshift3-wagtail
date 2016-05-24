@@ -9,7 +9,8 @@ To create a Docker image for the application, the Source to Image (S2I) system i
 To build the Docker image use the ``warpdrive image`` command.
 
 ```
-(warpdrive+wagtail) grumpy-old-man:openshift3-wagtail graham$ warpdrive imageI0523 21:50:30.529721 52649 install.go:251] Using "assemble" installed from "image:///usr/local/s2i/bin/assemble"
+(warpdrive+wagtail) grumpy-old-man:openshift3-wagtail graham$ warpdrive image wagtail
+I0523 21:50:30.529721 52649 install.go:251] Using "assemble" installed from "image:///usr/local/s2i/bin/assemble"
 I0523 21:50:30.529863 52649 install.go:251] Using "run" installed from "image:///usr/local/s2i/bin/run"
 I0523 21:50:30.529887 52649 install.go:251] Using "save-artifacts" installed from "image:///usr/local/s2i/bin/save-artifacts"
 ---> Installing application source
@@ -19,23 +20,7 @@ Collecting Django<1.10,>=1.9 (from -r requirements.txt (line 1))
 Downloading Django-1.9.6-py2.py3-none-any.whl (6.6MB)
 Collecting wagtail<1.5,>=1.4.5 (from -r requirements.txt (line 2))
 Downloading wagtail-1.4.5-py2.py3-none-any.whl (6.6MB)
-...Downloading pytz-2016.4-py2.py3-none-any.whl (480kB)
-Installing collected packages: Django, beautifulsoup4, Pillow, Unidecode, six, html5lib, Willow, djangorestframework, pytz, django-modelcluster, django-taggit, django-treebeard, wagtail, psycopg2, redis, django-redis
-Running setup.py install for Pillow: started
-Running setup.py install for Pillow: finished with status 'done'
-Running setup.py install for Unidecode: started
-Running setup.py install for Unidecode: finished with status 'done'
-Running setup.py install for html5lib: started
-Running setup.py install for html5lib: finished with status 'done'
-Running setup.py install for django-modelcluster: started
-Running setup.py install for django-modelcluster: finished with status 'done'
-Running setup.py install for django-treebeard: started
-Running setup.py install for django-treebeard: finished with status 'done'
-Running setup.py install for psycopg2: started
-Running setup.py install for psycopg2: finished with status 'done'
-Running setup.py install for django-redis: started
-Running setup.py install for django-redis: finished with status 'done'
-Successfully installed Django-1.9.6 Pillow-3.2.0 Unidecode-0.4.19 Willow-0.3.1 beautifulsoup4-4.4.1 django-modelcluster-1.1 django-redis-4.3.0 django-taggit-0.18.3 django-treebeard-4.0.1 djangorestframework-3.3.3 html5lib-0.9999999 psycopg2-2.6.1 pytz-2016.4 redis-2.10.5 six-1.10.0 wagtail-1.4.5
+...
 -----> Collecting static files for Django
 Copying '/opt/app-root/src/wagtaildemo/static/js/wagtaildemo.js'
 ...
@@ -44,10 +29,10 @@ Copying '/opt/app-root/src/wagtaildemo/static/js/wagtaildemo.js'
 ---> Fix permissions on application source
 ```
 
-This will create a Docker image with default name of ``warpdrive-wagtail-application``.
+This will create a Docker image with name of ``wagtail``.
 
 ```
-warpdrive-wagtail-application            latest              1e2081a44c50        About a minute ago   876.5 MB
+wagtail                                  latest              3144d5bc2679        2 minutes ago       876.4 MB
 ```
 
 ## Running the Docker Image
@@ -55,7 +40,7 @@ warpdrive-wagtail-application            latest              1e2081a44c50       
 Once the Docker image has been created, it can be run. The default ``CMD`` specified by the image is sufficient, so no additional command need be provided. The HTTP listener port which needs to be exposed is port 8080.
 
 ```
-(warpdrive+wagtail) $ docker run --rm -p 8080:8080 --name wagtail warpdrive-wagtail-application
+(warpdrive+wagtail) $ docker run --rm -p 8080:8080 --name wagtail wagtail
 ---> Executing the start up script
  -----> Configuring for deployment type of 'auto'
  -----> Default WSGI server type is 'mod_wsgi'
@@ -117,6 +102,55 @@ The database and any uploaded media files will only exist for the life of the co
 To have the database and any media files survive beyond the life of the container and able to be reused on subsequent invocations of the application as a new container, an external volume can be mounted on the directory ``/opt/app-root/data``.
 
 ```
-$ docker run --rm -p 8080:8080 --name wagtail -v `pwd`/data:/opt/app-root/data warpdrive-wagtail-application
+$ docker run --rm -p 8080:8080 -v `pwd`/data:/opt/app-root/data --name wagtail wagtail
 ```
 
+## Using production settings
+
+By default the application will be run with development settings. This means a SQLite database is used, along with a fixed Django secret and Django debug enabled. These settings should not be used in production.
+
+To enable production mode you need to set the following three environment variables when running the image.
+
+* DJANGO_SETTINGS_MODULE=wagtaildemo.settings.production
+* DJANGO_SECRET_KEY=abcdefghijklmnopqrstuvwxyz0123456789
+* DATABASE_URL=postgres://wagtail:secret@postgres:5432/wagtail
+
+The ``DJANGO_SETTINGS_MODULE`` environment variable must be set to ``wagtail.settings.production``. The ``DJANGO_SECRET_KEY`` should be set to a random string of characters of suitable size. The ``DATABASE_URL`` should be set to the resolve location of the database you wish to use, along with the login credentials and database name.
+
+To test the production configuration you can use the ``docker-compose.yml`` file:
+
+```
+version: '2'
+services:
+  web:
+    image: wagtail
+    ports:
+     - "8080:8080"
+    depends_on:
+     - postgres
+    environment:
+     - DJANGO_SETTINGS_MODULE=wagtaildemo.settings.production
+     - DJANGO_SECRET_KEY=abcdefghijklmnopqrstuvwxyz0123456789
+     - DATABASE_URL=postgres://wagtail:secret@postgres:5432/wagtail
+    volumes:
+     - /opt/app-root/data
+  postgres:
+    image: postgres
+    environment:
+     - POSTGRES_USER=wagtail
+     - POSTGRES_PASSWORD=secret
+```
+
+You can startup the application and database by running:
+
+```
+docker-compose -f docker-compose.yml up
+```
+
+To initialise the application data and the separate database, you would then need to identify the running ``web`` container and then using ``docker exec``, run:
+
+```
+docker exec -it openshift3wagtail_web_1 warpdrive setup
+```
+
+You should adopt this recipe to your own requirements for production deployment. This should include using proper persistent volumes storage for application data and the separate database, rather than storage local to the Docker service. The mount point of the volume for application data in the ``web`` container should be ``/opt/app-root/data``. The mount point of the volume for the database data in the ``postgres`` container should be ``/var/lib/postgresql/data``.

@@ -18,7 +18,8 @@ set -eo pipefail
 if [ ! -f $WARPDRIVE_APP_ROOT/data/markers/setup ]; then
     # Create the directory where media files will be stored.
 
-    mkdir -p $WARPDRIVE_APP_ROOT/data/django/media
+    mkdir -p $WARPDRIVE_APP_ROOT/data/wagtail
+    mkdir -p $WARPDRIVE_APP_ROOT/data/wagtail/media
 
     # Check whether the database is actually ready.
 

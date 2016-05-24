@@ -139,7 +139,7 @@ else:
 STATIC_URL = '/static/'
 
 if APP_ROOT:
-    MEDIA_ROOT = os.path.join(APP_ROOT, 'data', 'django', 'media')
+    MEDIA_ROOT = os.path.join(APP_ROOT, 'data', 'wagtail', 'media')
 else:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

@@ -22,10 +22,16 @@ if [ ! -f $WARPDRIVE_APP_ROOT/data/markers/setup ]; then
 
     # Check whether the database is actually ready.
 
-    (cat - | python manage.py shell) << !
+    case "$DATABASE_URL" in
+        sqlite:*)
+            ;;
+        *)
+            (cat - | python manage.py shell) << !
 import runpy
 _ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/scripts/check-database.py')
 !
+            ;;
+    esac
 
     echo " -----> Running Django database migration"
 

@@ -6,10 +6,16 @@ set -eo pipefail
 
 # Check whether the database is actually ready.
 
-(cat - | python manage.py shell) << !
+case "$DATABASE_URL" in
+    sqlite:*)
+        ;;
+    *)
+        (cat - | python manage.py shell) << !
 import runpy
 _ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/scripts/check-database.py')
 !
+        ;;
+esac
 
 # Runs the database migration.
 #

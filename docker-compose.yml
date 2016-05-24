@@ -1,0 +1,19 @@
+version: '2'
+services:
+  web:
+    image: wagtail 
+    ports:
+     - "8080:8080"
+    depends_on:
+     - postgres
+    environment:
+     - DJANGO_SETTINGS_MODULE=wagtaildemo.settings.production
+     - DJANGO_SECRET_KEY=abcdefghijklmnopqrstuvwxyz0123456789
+     - DATABASE_URL=postgres://wagtail:secret@postgres:5432/wagtail
+    volumes:
+     - /opt/app-root/data
+  postgres:
+    image: postgres
+    environment:
+     - POSTGRES_USER=wagtail
+     - POSTGRES_PASSWORD=secret

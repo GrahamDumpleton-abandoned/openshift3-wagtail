@@ -115,7 +115,7 @@ To enable production mode you need to set the following three environment variab
 * DJANGO_SECRET_KEY=abcdefghijklmnopqrstuvwxyz0123456789
 * DATABASE_URL=postgres://wagtail:secret@postgres:5432/wagtail
 
-The ``DJANGO_SETTINGS_MODULE`` environment variable must be set to ``wagtail.settings.production``. The ``DJANGO_SECRET_KEY`` should be set to a random string of characters of suitable size. The ``DATABASE_URL`` should be set to the resolve location of the database you wish to use, along with the login credentials and database name.
+The ``DJANGO_SETTINGS_MODULE`` environment variable must be set to ``wagtail.settings.production``. The ``DJANGO_SECRET_KEY`` should be set to a random string of characters of suitable size. The ``DATABASE_URL`` should be set to the location of the database you wish to use, along with the login credentials and database name.
 
 To test the production configuration you can use the ``docker-compose.yml`` file:
 

@@ -303,7 +303,7 @@ At this point you would need to star customising the Wagtail page model objects.
 
 Each time you have made code changes, update database migrations and commit all changes back to the source code repository. After having pushed changes up to GitHub, you can manually trigger a new build and deployment by running ``oc start-build wagtail``.
 
-## Instant Deploying Using Templates
+## Instant Deployment Using Templates
 
 The above outlines the manual steps required to deploy the application to OpenShift. This process can be made easier using templates. To try out initial deployment using templates, start out by running:
 

@@ -1,4 +1,4 @@
-# Deploying to OpenShift
+# Deploying to an OpenShift Cluster
 
 To deploy the application to OpenShift, the built-in support for Source to Image (S2I) is used. It is only a matter of telling OpenShift the correct S2I builder to use in conjunction with the source code repository for the application.
 

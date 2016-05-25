@@ -321,4 +321,29 @@ wagtail-cms-single-sqlite         Wagtail CMS (Single Pod / SQLite)            7
 
 You can select these templates from the OpenShift web console when adding an application to a project, or you can use ``oc new-app`` using the template as argument. Defaults will be used for any parameters such as passwords and secret keys. The values of the password will be displayed in the output of ``oc new-app``, or you can query them in the web console by looking at the deployment configuration details for the application.
 
+```
+$ oc new-app wagtail-cms-single-postgresql
+--> Deploying template wagtail-cms-single-postgresql for "wagtail-cms-single-postgresql"
+     With parameters:
+      Application instance name=wagtail
+      Application memory limit=384Mi
+      Application volume capacity=512Mi
+      Application admin user=admin # generated
+      Application admin user password=TWYhHMUiv08Q3Mto # generated
+      Application admin email=admin@example.com # generated
+      Django secret key=INLbjtS2iRpsw1TNdbJvQXVSTdanKWP4cgLQ7a3rAcDVXmXObE6RSDbrhlYbVJsh # generated
+      PostgreSQL database user=userVP5 # generated
+      PostgreSQL user password=BwrbTfUFaoSGHK7A # generated
+      PostgreSQL memory limit=384Mi
+--> Creating resources with label app=wagtail ...
+    imagestream "wagtail" created
+    buildconfig "wagtail" created
+    deploymentconfig "wagtail" created
+    persistentvolumeclaim "wagtail-pvc" created
+    service "wagtail" created
+    route "wagtail" created
+--> Success
+    Build scheduled, use 'oc logs -f bc/wagtail' to track its progress.
+    Run 'oc status' to view your app.
+```
 

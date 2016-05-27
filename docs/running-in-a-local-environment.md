@@ -143,7 +143,7 @@ Running migrations:
 To start Wagtail CMS application, run the ``warpdrive start`` command.
 
 ```
-(warpdrive+wagtail) grumpy-old-man:openshift3-wagtail graham$ warpdrive start
+(warpdrive+wagtail) $ warpdrive start
  -----> Configuring for deployment type of 'auto'
  -----> Default WSGI server type is 'mod_wsgi'
  -----> Running server script start-mod_wsgi

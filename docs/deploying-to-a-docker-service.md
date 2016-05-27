@@ -9,7 +9,7 @@ To create a Docker image for the application, the Source to Image (S2I) system i
 To build the Docker image use the ``warpdrive image`` command.
 
 ```
-(warpdrive+wagtail) grumpy-old-man:openshift3-wagtail graham$ warpdrive image wagtail
+(warpdrive+wagtail) $ warpdrive image wagtail
 I0523 21:50:30.529721 52649 install.go:251] Using "assemble" installed from "image:///usr/local/s2i/bin/assemble"
 I0523 21:50:30.529863 52649 install.go:251] Using "run" installed from "image:///usr/local/s2i/bin/run"
 I0523 21:50:30.529887 52649 install.go:251] Using "save-artifacts" installed from "image:///usr/local/s2i/bin/save-artifacts"

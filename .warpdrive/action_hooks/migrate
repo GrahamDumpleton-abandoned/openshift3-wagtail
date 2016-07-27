@@ -6,13 +6,15 @@ set -eo pipefail
 
 # Check whether the database is actually ready.
 
+echo " -----> Checking database is running"
+
 case "$DATABASE_URL" in
     sqlite:*)
         ;;
     *)
         (cat - | python manage.py shell) << !
 import runpy
-_ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/scripts/check-database.py')
+_ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/util_scripts/check-database.py')
 !
         ;;
 esac

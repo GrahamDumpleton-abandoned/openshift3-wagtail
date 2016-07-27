@@ -314,9 +314,9 @@ oc create -f openshift-templates.json
 This will create the templates:
 
 ```
-wagtail-cms-multi-postgresql      Wagtail CMS (Multiple Pods / PostgreSQL)     11 (4 generated)   9
 wagtail-cms-single-postgresql     Wagtail CMS (Single Pod / PostgreSQL)        10 (4 generated)   6
 wagtail-cms-single-sqlite         Wagtail CMS (Single Pod / SQLite)            7 (2 generated)    6
+wagtail-cms-multi-postgresql      Wagtail CMS (Multiple Pods / PostgreSQL)     11 (4 generated)   9
 ```
 
 You can select these templates from the OpenShift web console when adding an application to a project, or you can use ``oc new-app`` using the template as argument. Defaults will be used for any parameters such as passwords and secret keys. The values of the password will be displayed in the output of ``oc new-app``, or you can query them in the web console by looking at the deployment configuration details for the application.

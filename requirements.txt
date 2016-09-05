@@ -2,3 +2,4 @@ Django>=1.10.1,<1.11
 wagtail>=1.6.2,<1.7
 psycopg2>=2.6.2,<2.7
 dj-database-url
+datadog

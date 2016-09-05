@@ -14,3 +14,11 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wagtaildemo.settings")
 
 application = get_wsgi_application()
+
+try:
+    import mod_wsgi
+    from . import metrics
+    metrics.initialize()
+
+except ImportError:
+    pass

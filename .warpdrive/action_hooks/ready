@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -x
+
+set -eo pipefail
+
+# This script checks to see if the application is ready to accept requests.
+
+# First see if the database is ready.
+
+echo " -----> Checking database is running"
+
+case "$DATABASE_URL" in
+    sqlite:*)
+        ;;
+    *)
+        (cat - | python manage.py shell --plain) << !
+import runpy
+_ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/util_scripts/check-database.py')
+!
+        ;;
+esac
+
+# Next see if the web application itself is ready.
+
+echo " -----> Checking if web application is accepting requests"
+
+curl -o /dev/null localhost:$WARPDRIVE_HTTP_PORT/admin

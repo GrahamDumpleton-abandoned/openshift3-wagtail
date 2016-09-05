@@ -12,7 +12,7 @@ case "$DATABASE_URL" in
     sqlite:*)
         ;;
     *)
-        (cat - | python manage.py shell) << !
+        (cat - | python manage.py shell --plain) << !
 import runpy
 _ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/util_scripts/check-database.py')
 !

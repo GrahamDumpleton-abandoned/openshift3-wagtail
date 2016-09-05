@@ -29,7 +29,7 @@ if [ ! -f $WARPDRIVE_APP_ROOT/data/markers/setup ]; then
         sqlite:*)
             ;;
         *)
-            (cat - | python manage.py shell) << !
+            (cat - | python manage.py shell --plain) << !
 import runpy
 _ = runpy.run_path('$WARPDRIVE_SRC_ROOT/.warpdrive/util_scripts/check-database.py')
 !

@@ -82,6 +82,6 @@ def initialize():
     if event_handler not in mod_wsgi.event_callbacks:
         mod_wsgi.subscribe_events(event_handler)
 
-       thread = threading.Thread(target=monitor)
-       thread.setDaemon(True)
-       thread.start()
+        thread = threading.Thread(target=monitor)
+        thread.setDaemon(True)
+        thread.start()

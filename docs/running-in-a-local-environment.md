@@ -30,19 +30,26 @@ Installing collected packages: warpdrive
 Successfully installed warpdrive-0.20.1
 ```
 
-You can activate the Python environment holding ``warpdrive`` at a later time using the ``workon`` command from the ``virtualenvwrapper`` package:
+Next update your ``$HOME/.bash_profile`` script to add a helper function which will make it possible to use ``warpdrive``.
+
 
 ```
-$ workon warpdrive
-(warpdrive) $
+# Set up warpdrive.
+
+WARPDRIVE=$HOME/Python/warpdrive/bin/warpdrive
+export WARPDRIVE
+
+source `$WARPDRIVE rcfile`
 ```
+
+Create a new shell so the changes are picked up. There is no need to activate the ``warpdrive`` virtual environment.
 
 ## Preparing the Environment
 
 To create a ``warpdrive`` environment for the project, from the top level directory of the project source code, use ``warpdrive`` to activate the environment. If the environment doesn't already exist, it will be created.
 
 ```
-(warpdrive) $ eval "$(warpdrive activate wagtail)"
+$ warpdrive project wagtail
 (warpdrive+wagtail) $
 ```
 

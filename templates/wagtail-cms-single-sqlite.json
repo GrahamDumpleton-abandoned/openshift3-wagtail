@@ -1,0 +1,305 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "wagtail-cms-single-sqlite",
+        "annotations": {
+            "description": "Wagtail CMS (Single Pod / SQLite)",
+            "iconClass": "icon-database",
+            "tags": "instant-app,wagtail"
+        }
+    },
+    "objects": [
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "web": "${APPLICATION_NAME}"
+                }
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "web": "${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "triggers": [
+                    {
+                        "type": "ImageChange"
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/GrahamDumpleton/openshift3-wagtail.git",
+                        "ref": "master"
+                    }
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "namespace": "openshift",
+                            "name": "python:2.7"
+                        },
+                        "scripts": "https://raw.githubusercontent.com/GrahamDumpleton/warpdrive/master/s2i/bootstrap"
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "${APPLICATION_NAME}:latest"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "web": "${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${APPLICATION_NAME}"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${APPLICATION_NAME}:latest"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "web": "${APPLICATION_NAME}"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "web": "${APPLICATION_NAME}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "${APPLICATION_NAME}",
+                                "image": "${APPLICATION_NAME}:latest",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "WAGTAIL_DEPLOYMENT_TYPE",
+                                        "value": "single-pod"
+                                    },
+                                    {
+                                        "name": "DATABASE_URL",
+                                        "value":
+                                        "sqlite:////opt/app-root/data/wagtail/database.db"
+                                    },
+                                    {
+                                        "name": "DJANGO_SETTINGS_MODULE",
+                                        "value": "wagtaildemo.settings.production"
+                                    },
+                                    {
+                                        "name": "DJANGO_SECRET_KEY",
+                                        "value": "${DJANGO_SECRET_KEY}"
+                                    },
+                                    {
+                                        "name": "DJANGO_ADMIN_USERNAME",
+                                        "value": "${DJANGO_ADMIN_USERNAME}"
+                                    },
+                                    {
+                                        "name": "DJANGO_ADMIN_PASSWORD",
+                                        "value": "${DJANGO_ADMIN_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "DJANGO_ADMIN_EMAIL",
+                                        "value": "${DJANGO_ADMIN_EMAIL}"
+                                    }
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "memory": "${APPLICATION_MEMORY_LIMIT}"
+                                    }
+                                },
+                                "volumeMounts": [
+                                    {
+                                        "name": "${APPLICATION_NAME}-pv",
+                                        "mountPath": "/opt/app-root/data"
+                                    }
+                                ],
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/",
+                                        "port": 8080,
+                                        "scheme": "HTTP"
+                                    }
+                                }
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "${APPLICATION_NAME}-pv",
+                                "persistentVolumeClaim": {
+                                    "claimName": "${APPLICATION_NAME}-pvc"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "PersistentVolumeClaim",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}-pvc"
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "${APPLICATION_VOLUME_CAPACITY}"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "web": "${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8080-tcp",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "web": "${APPLICATION_NAME}"
+                }
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "web": "${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "to": {
+                    "kind": "Service",
+                    "name": "${APPLICATION_NAME}"
+                },
+                "port": {
+                    "targetPort": "8080-tcp"
+                },
+                "tls": {
+                    "termination": "edge",
+                    "insecureEdgeTerminationPolicy": "Allow"
+                }
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "APPLICATION_NAME",
+            "displayName": "Application instance name",
+            "description": "The name of the Wagtail instance",
+            "value": "wagtail",
+            "from": "[a-zA-Z0-9]{10}",
+            "required": true
+        },
+        {
+            "name": "APPLICATION_MEMORY_LIMIT",
+            "displayName": "Application memory limit",
+            "description": "Maximum amount of memory Wagtail can use",
+            "value": "384Mi",
+            "required": true
+        },
+        {
+            "name": "APPLICATION_VOLUME_CAPACITY",
+            "displayName": "Application volume capacity",
+            "description": "Volume space available for source code repositories and database",
+            "value": "512Mi",
+            "required": true
+        },
+        {
+            "name": "DJANGO_ADMIN_USERNAME",
+            "displayName": "Application admin user",
+            "description": "Name of Wagtail admin user",
+            "generate": "expression",
+            "value": "admin",
+            "required": true
+        },
+        {
+            "name": "DJANGO_ADMIN_PASSWORD",
+            "displayName": "Application admin user password",
+            "description": "Initial password for Wagtail admin user",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{16}",
+            "required": true
+        },
+        {
+            "name": "DJANGO_ADMIN_EMAIL",
+            "displayName": "Application admin email",
+            "description": "Email address of Wagtail admin user",
+            "generate": "expression",
+            "value": "admin@example.com",
+            "required": true
+        },
+        {
+            "name": "DJANGO_SECRET_KEY",
+            "displayName": "Django secret key",
+            "description": "Secret key for securing session cookies",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{64}",
+            "required": true
+        }
+    ],
+    "labels": {
+        "template": "wagtail-cms-single-sqlite-template"
+    }
+}

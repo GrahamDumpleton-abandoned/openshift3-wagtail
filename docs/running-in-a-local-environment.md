@@ -30,7 +30,7 @@ Installing collected packages: warpdrive
 Successfully installed warpdrive-0.20.1
 ```
 
-Next update your ``$HOME/.bash_profile`` script to add a helper function which will make it possible to use ``warpdrive``.
+Next update your ``$HOME/.bash_profile`` script to add a helper function which will make it possible to use ``warpdrive``. Ensure that ``WARPDRIVE`` environment variable is set to the path to the ``warpdrive`` program that was just installed.
 
 
 ```
